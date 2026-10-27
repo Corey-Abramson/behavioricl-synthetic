@@ -20,7 +20,28 @@ from openai import OpenAI, RateLimitError, APIError
 
 import mock_backend
 
-MODEL = "gpt-4o"  # swap to "gpt-4o-mini" for cheaper tests
+MODEL = os.environ.get("BEHAVIORICL_MODEL", "gpt-4o")  # e.g. "gpt-4o-mini" for cheaper tests
+
+# Optional sampling settings; unset means the provider default.
+TEMPERATURE = os.environ.get("BEHAVIORICL_TEMPERATURE")
+SEED = os.environ.get("BEHAVIORICL_SEED")
+
+
+def sampling_kwargs() -> dict:
+    kw = {}
+    if TEMPERATURE is not None:
+        kw["temperature"] = float(TEMPERATURE)
+    if SEED is not None:
+        kw["seed"] = int(SEED)
+    return kw
+
+
+def run_settings() -> dict:
+    """Model settings written into every output row, so each prediction records how it was made."""
+    if mock_enabled():
+        return {"model": "mock", "temperature": None, "seed": None}
+    kw = sampling_kwargs()
+    return {"model": MODEL, "temperature": kw.get("temperature"), "seed": kw.get("seed")}
 
 
 def mock_enabled() -> bool:
@@ -84,6 +105,7 @@ def call_model(
             response = client.chat.completions.create(
                 model=MODEL,
                 max_tokens=64,
+                **sampling_kwargs(),
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt},
@@ -99,6 +121,8 @@ def call_model(
                 raise RuntimeError(f"Failed to parse model output after {retries} attempts: {e}\nRaw: {raw!r}")
             time.sleep(backoff * (attempt + 1))
         except RateLimitError:
+            if attempt == retries - 1:
+                raise
             wait = backoff * (2 ** attempt)
             print(f"  Rate limited, waiting {wait}s...")
             time.sleep(wait)
@@ -128,6 +152,7 @@ def call_model_trust(
             response = client.chat.completions.create(
                 model=MODEL,
                 max_tokens=64,
+                **sampling_kwargs(),
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt},
@@ -148,6 +173,8 @@ def call_model_trust(
                 raise RuntimeError(f"Failed to parse model output after {retries} attempts: {e}\nRaw: {raw!r}")
             time.sleep(backoff * (attempt + 1))
         except RateLimitError:
+            if attempt == retries - 1:
+                raise
             wait = backoff * (2 ** attempt)
             print(f"  Rate limited, waiting {wait}s...")
             time.sleep(wait)

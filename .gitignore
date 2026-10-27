@@ -3,3 +3,6 @@ __pycache__/
 *.py[cod]
 .DS_Store
 .idea/
+
+# inference outputs are written on each run, not shipped
+2_Inference/*/*_results.jsonl

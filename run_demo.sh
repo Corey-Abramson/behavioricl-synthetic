@@ -10,8 +10,8 @@
 # come out in that mode are a plumbing test, not a finding — see README.md and
 # the warning at the top of 2_Inference/mock_backend.py.
 #
-# Otherwise set OPENAI_API_KEY and the pipeline will call the model named in
-# 2_Inference/client.py.
+# Otherwise set OPENAI_API_KEY and the pipeline will call BEHAVIORICL_MODEL
+# (default gpt-4o; see 2_Inference/client.py).
 
 set -euo pipefail
 

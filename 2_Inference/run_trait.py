@@ -16,7 +16,8 @@ Output files (all in 2_Inference/{trait}/):
     other_student_icl_results.jsonl
 
 Each line:
-    {participant_code, pred_<key>, true_<col1>[, true_<col2>...], partner_send (trust only)}
+    {participant_code, pred_<key>, true_<col1>[, true_<col2>...], partner_send (trust only),
+     model, temperature, seed}
 """
 
 import json
@@ -28,7 +29,7 @@ ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "1_Prompts"))
 
 from trait_configs import TRAIT_CONFIGS, TraitConfig
-from client import call_model, call_model_trust
+from client import call_model, call_model_trust, run_settings
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -108,6 +109,7 @@ def infer(
                     **get_true_values(record, config),
                 }
 
+            out.update(run_settings())
             f.write(json.dumps(out) + "\n")
             f.flush()
 

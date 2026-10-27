@@ -38,11 +38,14 @@ export OPENAI_API_KEY=...       # your own key; none ships with this copy
 python 2_Inference/run_trait.py cooperation
 ```
 
-The model is set in `2_Inference/client.py` (`MODEL = "gpt-4o"`; `gpt-4o-mini`
-for cheap tests). One trait over the 240 synthetic participants is about 700
+The model defaults to `gpt-4o`; set `BEHAVIORICL_MODEL` to change it
+(`gpt-4o-mini` for cheap tests), and optionally `BEHAVIORICL_TEMPERATURE` and
+`BEHAVIORICL_SEED`. Every output row records the model, temperature and seed
+it was made with (null means the provider default). One trait over the 240 synthetic participants is about 700
 calls across the three inference variants. `run_trait.py` appends to its output
 files and skips participant codes it has already written, so an interrupted run
-can just be restarted.
+can just be restarted. No inference outputs ship with the repo, so a first run
+starts from scratch.
 
 Numbers from mock mode are a property of the stand-in and of the data generator,
 so don't read anything into them; the `_THESE_ARE_NOT_RESULTS.txt` notes in
@@ -99,7 +102,7 @@ Adding a trait means adding one entry there.
   build_prompts.py         behavioural history -> prompt, target app held out
   <trait>/prompts.jsonl
 2_Inference/
-  client.py                model wrapper (set MODEL here)
+  client.py                model wrapper (BEHAVIORICL_MODEL etc.)
   mock_backend.py          offline stand-in for running without a key
   run_trait.py             runs the three variants, with checkpointing
   <trait>/{icl,zero_shot,other_student_icl}_results.jsonl
