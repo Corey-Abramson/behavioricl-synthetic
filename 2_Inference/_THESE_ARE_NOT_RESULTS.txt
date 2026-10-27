@@ -1,0 +1,18 @@
+The .txt files under 3_Eval/ in this export were produced by running the
+pipeline on SYNTHETIC data with BEHAVIORICL_MOCK=1, i.e. against the offline
+arithmetic heuristic in 2_Inference/mock_backend.py rather than against a
+language model.
+
+They exist to show that the metric code runs and what its output looks like.
+Every number in them is a joint property of
+  0_Preprocess/make_synthetic_data.py  (the data generator)  and
+  2_Inference/mock_backend.py          (the fake predictor).
+
+They are not study results, not GPT-4o results, and not estimates of anything
+about human behaviour. Do not cite, plot, quote or compare them.
+
+The original study's per-trait summaries, validation statistics, cross-trait
+report, heatmap and scatter plots were deliberately not included in this
+export: they are statistics computed from the original participant data.
+
+See README.md.

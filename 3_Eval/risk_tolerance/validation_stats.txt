@@ -1,0 +1,24 @@
+Statistical Validation — Risk Tolerance  N=239
+============================================================
+
+## 1. Bootstrap CIs on Pearson r (B=10,000)
+
+  ICL                    r=-0.0401  95% CI [-0.1703, 0.0908]
+  Zero-shot              r=-0.0292  95% CI [-0.1523, 0.0936]
+  Other-student ICL      r=-0.0378  95% CI [-0.1688, 0.0897]
+
+  ICL − Zero-shot:  Δr=-0.0108  95% CI [-0.1712, 0.1527]
+
+## 2. Wilcoxon Signed-Rank: ICL vs Zero-shot (absolute error)
+
+  W=4473, p=1.52e-06, rank-biserial r=0.4191 (Zero-shot better)
+  Mean |error| — ICL: 2.1506  Zero-shot: 1.7322
+
+## 3. SD Calibration
+
+  Method                       SD    % of true SD
+  -----------------------------------------------
+  True                     1.9759          100.0%
+  ICL                      0.8818           44.6%
+  Zero-shot                0.7341           37.2%
+  Other-student ICL        0.8615           43.6%

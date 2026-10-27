@@ -1,0 +1,102 @@
+PCA Baseline vs LLM ICL — Leave-One-Trait-Out
+==============================================================================
+
+Trait                            N    PC1 r   PC1 r²    LLM r   LLM r²   Δr (LLM−PC1)
+------------------------------------------------------------------------------
+trust                          215   0.8204       0.6731   0.2389   0.0571        -0.5815
+cooperation                    221   0.8904       0.7928   0.2122   0.0450        -0.6781
+coordination                   209   0.4558       0.2077   0.1145   0.0131        -0.3412
+depth_of_reasoning             223   0.0242 (−)   0.0006   0.0276   0.0008        +0.0034
+tolerance_for_inequality       239   0.8215 (−)   0.6749  -0.2773   0.0769        -1.0989
+risk_tolerance                 239   0.1175       0.0138  -0.0401   0.0016        -0.1576
+altruism                       239   0.7450       0.5551   0.2027   0.0411        -0.5423
+morality                       239   0.8330       0.6938   0.1600   0.0256        -0.6730
+competitiveness                217   0.0316       0.0010  -0.0144   0.0002        -0.0460
+------------------------------------------------------------------------------
+PC1 r = |Pearson r| between leave-one-out PC1 score and held-out trait.
+(−) = PC1 anti-correlated with target (sign is arbitrary; magnitude used for comparison).
+Δr = LLM ICL r − PC1 |r|.
+
+
+PC1 loadings (sorted by |loading|):
+  trust:
+    tolerance_for_inequality     -0.4898
+    morality                     +0.4857
+    cooperation                  +0.4779
+    altruism                     +0.4529
+    coordination                 +0.2940
+    risk_tolerance               +0.0524
+    depth_of_reasoning           -0.0363
+    competitiveness              -0.0135
+  cooperation:
+    morality                     +0.4900
+    tolerance_for_inequality     -0.4847
+    trust                        +0.4686
+    altruism                     +0.4551
+    coordination                 +0.2974
+    risk_tolerance               +0.0901
+    competitiveness              +0.0413
+    depth_of_reasoning           -0.0020
+  coordination:
+    cooperation                  +0.4584
+    morality                     +0.4583
+    tolerance_for_inequality     -0.4556
+    trust                        +0.4287
+    altruism                     +0.4273
+    risk_tolerance               +0.0726
+    depth_of_reasoning           -0.0199
+    competitiveness              +0.0155
+  depth_of_reasoning:
+    morality                     +0.4442
+    cooperation                  +0.4415
+    tolerance_for_inequality     -0.4396
+    trust                        +0.4174
+    altruism                     +0.4122
+    coordination                 +0.2577
+    risk_tolerance               +0.0630
+    competitiveness              +0.0056
+  tolerance_for_inequality:
+    morality                     +0.4840
+    cooperation                  +0.4786
+    trust                        +0.4740
+    altruism                     +0.4528
+    coordination                 +0.3005
+    risk_tolerance               +0.1255
+    competitiveness              +0.0298
+    depth_of_reasoning           -0.0092
+  risk_tolerance:
+    morality                     +0.4468
+    tolerance_for_inequality     -0.4445
+    cooperation                  +0.4418
+    trust                        +0.4168
+    altruism                     +0.4148
+    coordination                 +0.2487
+    depth_of_reasoning           -0.0071
+    competitiveness              -0.0022
+  altruism:
+    morality                     +0.4818
+    cooperation                  +0.4770
+    tolerance_for_inequality     -0.4761
+    trust                        +0.4600
+    coordination                 +0.3015
+    risk_tolerance               +0.1039
+    competitiveness              +0.0172
+    depth_of_reasoning           -0.0038
+  morality:
+    cooperation                  +0.4844
+    tolerance_for_inequality     -0.4832
+    trust                        +0.4705
+    altruism                     +0.4574
+    coordination                 +0.2984
+    risk_tolerance               +0.1095
+    depth_of_reasoning           -0.0124
+    competitiveness              +0.0098
+  competitiveness:
+    tolerance_for_inequality     -0.4428
+    cooperation                  +0.4422
+    morality                     +0.4408
+    trust                        +0.4208
+    altruism                     +0.4143
+    coordination                 +0.2370
+    risk_tolerance               +0.0872
+    depth_of_reasoning           +0.0393

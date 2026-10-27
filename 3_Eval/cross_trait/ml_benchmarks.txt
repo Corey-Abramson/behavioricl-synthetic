@@ -1,0 +1,96 @@
+ML Benchmarks vs LLM ICL — BehaviorICL
+5-fold CV (OLS / Lasso / RF) vs ICL, Zero-shot, PC1
+================================================================================================
+
+TABLE 1: Pearson r
+
+Trait                              N   Zero-shot      ICL     PC1*      OLS    Lasso       RF
+------------------------------------------------------------------------------------------------
+trust                            215     -0.0295   0.2389   0.8204   0.8377   0.8367   0.8250
+cooperation                      221      0.0602   0.2122   0.8904   0.8934   0.8956   0.8850
+coordination                     209         nan   0.1145   0.4558   0.5148   0.5017   0.5312
+depth_of_reasoning               223      0.0536   0.0276   0.0242  -0.1328  -0.1816  -0.1270
+tolerance_for_inequality         239     -0.0092  -0.2773   0.8215   0.8487   0.8491   0.8371
+risk_tolerance                   239     -0.0292  -0.0401   0.1175   0.5019   0.5025   0.2959
+altruism                         239      0.0510   0.2027   0.7450   0.7496   0.7470   0.7454
+morality                         239      0.0012   0.1600   0.8330   0.8347   0.8375   0.8360
+competitiveness                  217     -0.0313  -0.0144   0.0316   0.2792   0.3165   0.2417
+------------------------------------------------------------------------------------------------
+* PC1 uses full dataset (no train/test split); OLS/Lasso/RF use 5-fold CV. ICL/Zero-shot are full-dataset.
+
+TABLE 2: MAE
+
+Trait                              N   Zero-shot      ICL      OLS    Lasso       RF
+------------------------------------------------------------------------------------------------
+trust                            215      0.9233   1.0326   0.4707   0.4725   0.4942
+cooperation                      221      0.1922   0.3423   0.0619   0.0619   0.0645
+coordination                     209      0.2907   0.3385   0.2448   0.2488   0.2405
+depth_of_reasoning               223     21.7874  34.2332  15.8454  15.4396  16.1028
+tolerance_for_inequality         239      1.5146   1.5397   0.7041   0.7002   0.7301
+risk_tolerance                   239      1.7322   2.1506   1.3614   1.3592   1.5257
+altruism                         239      1.8787   2.3975   0.9697   0.9771   0.9763
+morality                         239      1.9891   2.0142   0.1550   0.1543   0.1531
+competitiveness                  217      0.5161   0.4977   0.4482   0.4596   0.4560
+------------------------------------------------------------------------------------------------
+
+NOTES
+  OLS/Lasso/RF: KFold(5, shuffle=True, seed=42). Features: 8 other traits.
+  Imputation: mean (within each fold). Scaling: StandardScaler (OLS/Lasso only).
+  Lasso: LassoCV with 5-fold inner CV, max_iter=10000.
+  RF: 200 trees, max_features='sqrt', random_state=42.
+  tolerance_for_inequality true values converted to A-credits (10 − slider).
+
+LASSO NONZERO COEFFICIENTS (fit on full data; standardized features)
+
+  trust (alpha=0.03354, 7/8 features):
+    cooperation                  +0.4011
+    risk_tolerance               +0.2475
+    morality                     +0.2218
+    altruism                     +0.1508
+    tolerance_for_inequality     -0.1356
+    depth_of_reasoning           +0.0157
+    competitiveness              +0.0048
+  cooperation (alpha=0.00252, 7/8 features):
+    tolerance_for_inequality     -0.0630
+    trust                        +0.0390
+    morality                     +0.0383
+    altruism                     +0.0275
+    coordination                 +0.0072
+    competitiveness              -0.0032
+    risk_tolerance               -0.0011
+  coordination (alpha=0.02077, 5/8 features):
+    risk_tolerance               +0.0916
+    cooperation                  +0.0663
+    tolerance_for_inequality     -0.0265
+    trust                        +0.0232
+    morality                     +0.0224
+  depth_of_reasoning (alpha=1.24522, 0/8 features):
+    (all coefficients zeroed — intercept-only model)
+  tolerance_for_inequality (alpha=0.02309, 7/8 features):
+    cooperation                  -0.6153
+    morality                     -0.4879
+    altruism                     -0.2216
+    trust                        -0.1672
+    risk_tolerance               +0.1198
+    competitiveness              +0.0560
+    coordination                 -0.0543
+  risk_tolerance (alpha=0.05591, 6/8 features):
+    trust                        +0.8221
+    coordination                 +0.5757
+    tolerance_for_inequality     +0.4563
+    competitiveness              +0.4070
+    cooperation                  -0.3079
+    morality                     -0.0738
+  altruism (alpha=0.10354, 4/8 features):
+    morality                     +0.3942
+    tolerance_for_inequality     -0.3937
+    cooperation                  +0.3188
+    trust                        +0.3045
+  morality (alpha=0.01130, 5/8 features):
+    tolerance_for_inequality     -0.1104
+    cooperation                  +0.0940
+    trust                        +0.0620
+    altruism                     +0.0541
+    coordination                 +0.0043
+  competitiveness (alpha=0.03939, 1/8 features):
+    risk_tolerance               +0.1311
