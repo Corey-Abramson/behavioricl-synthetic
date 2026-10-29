@@ -162,7 +162,7 @@ TRAIT_CONFIGS = {
             "students (A and B). {context}\n"
             "The decision is how many credits to give Participant A (1–9); "
             "Participant B receives the remainder. "
-            "Choosing 5 = equal split; choosing 1 = keep the original allocation (A keeps 9)."
+            "Choosing 5 = equal split; choosing 9 = keep the original allocation (A keeps 9)."
         ),
         prediction_question=(
             "Based on the behavioral history above, predict:\n"
