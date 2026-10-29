@@ -17,7 +17,7 @@ Output files (all in 2_Inference/{trait}/):
 
 Each line:
     {participant_code, pred_<key>, true_<col1>[, true_<col2>...], partner_send (trust only),
-     model, temperature, seed}
+     donor_participant_code (other-student ICL only), model, temperature, seed}
 """
 
 import json
@@ -73,10 +73,12 @@ def infer(
     out_path: Path,
     make_user_prompt,
     method_label: str,
+    extra_fields=None,
 ):
     """
     Generic inference loop with checkpoint support.
     make_user_prompt(record) -> str
+    extra_fields(record) -> dict, optional, added to each output row
     """
     done = load_done(out_path)
     todo = [r for r in prompts if r["participant_code"] not in done]
@@ -109,6 +111,8 @@ def infer(
                     **get_true_values(record, config),
                 }
 
+            if extra_fields is not None:
+                out.update(extra_fields(record))
             out.update(run_settings())
             f.write(json.dumps(out) + "\n")
             f.flush()
@@ -183,8 +187,6 @@ def main(trait_name: str):
     out_dir = ROOT / "2_Inference" / trait_name
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    rng = random.Random(42)
-
     # ── Method 1: ICL — use participant's own behavioral history ──────────────
     print("\n[1/3] ICL")
     infer(
@@ -210,11 +212,13 @@ def main(trait_name: str):
     codes = [r["participant_code"] for r in prompts]
     prompt_by_code = {r["participant_code"]: r["prompt"] for r in prompts}
 
+    # Draw every donor up front, in prompt order, so a resumed run gets the same
+    # donors as an uninterrupted one; each output row records its donor.
+    rng = random.Random(42)
+    donor_by_code = {c: rng.choice([o for o in codes if o != c]) for c in codes}
+
     def make_other_student_prompt(record: dict) -> str:
-        code = record["participant_code"]
-        other_codes = [c for c in codes if c != code]
-        other_code = rng.choice(other_codes)
-        return prompt_by_code[other_code]
+        return prompt_by_code[donor_by_code[record["participant_code"]]]
 
     infer(
         prompts,
@@ -222,6 +226,7 @@ def main(trait_name: str):
         out_dir / "other_student_icl_results.jsonl",
         make_user_prompt=make_other_student_prompt,
         method_label="Other-student ICL",
+        extra_fields=lambda r: {"donor_participant_code": donor_by_code[r["participant_code"]]},
     )
 
     print(f"\nDone. Results in: {out_dir}")
