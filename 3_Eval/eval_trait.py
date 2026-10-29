@@ -47,6 +47,22 @@ def pearson_r(xs, ys):
     return cov / (sdx * sdy) if sdx > 0 and sdy > 0 else float("nan")
 
 
+MIN_FINITE_SHARE = 0.95
+
+
+def _percentile_ci(draws, b):
+    """95% interval over the finite draws; NaN bounds if fewer than 95% are finite.
+
+    A resample whose predictions (or truths) are all equal has an undefined r, and
+    NaN cannot be sorted, so undefined draws are dropped before taking percentiles.
+    """
+    finite = sorted(d for d in draws if math.isfinite(d))
+    m = len(finite)
+    if m < MIN_FINITE_SHARE * b:
+        return float("nan"), float("nan")
+    return finite[int(0.025 * m)], finite[int(0.975 * m)]
+
+
 def bootstrap_r(pred, true, b=B, seed=SEED):
     rng = random.Random(seed)
     n = len(pred)
@@ -54,8 +70,7 @@ def bootstrap_r(pred, true, b=B, seed=SEED):
     for _ in range(b):
         idx = [rng.randint(0, n - 1) for _ in range(n)]
         rs.append(pearson_r([pred[i] for i in idx], [true[i] for i in idx]))
-    rs.sort()
-    return rs[int(0.025 * b)], rs[int(0.975 * b)]
+    return _percentile_ci(rs, b)
 
 
 def bootstrap_r_diff(pred_a, pred_b, true, b=B, seed=SEED):
@@ -67,8 +82,7 @@ def bootstrap_r_diff(pred_a, pred_b, true, b=B, seed=SEED):
         ra = pearson_r([pred_a[i] for i in idx], [true[i] for i in idx])
         rb = pearson_r([pred_b[i] for i in idx], [true[i] for i in idx])
         diffs.append(ra - rb)
-    diffs.sort()
-    return diffs[int(0.025 * b)], diffs[int(0.975 * b)]
+    return _percentile_ci(diffs, b)
 
 
 def wilcoxon_signed_rank(diffs):
