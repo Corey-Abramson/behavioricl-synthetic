@@ -464,6 +464,7 @@ def main(trait_name: str):
 
     records = []
     skipped = 0
+    skipped_nan_send = 0
     for _, row in df.iterrows():
         code = row["participant.code"]
 
@@ -472,6 +473,11 @@ def main(trait_name: str):
             partner_send = partner_send_lookup.get(code)
             if partner_send is None:
                 skipped += 1
+                continue
+            # A matched partner with no recorded send gives NaN; the prompt would
+            # say "partner sent nan credits", so skip the participant
+            if math.isnan(partner_send):
+                skipped_nan_send += 1
                 continue
         else:
             partner_send = None
@@ -495,6 +501,8 @@ def main(trait_name: str):
 
     if skipped:
         print(f"  Skipped {skipped} participants (no partner match or missing target data)")
+    if skipped_nan_send:
+        print(f"  Skipped {skipped_nan_send} participants (partner's send is missing)")
 
     out_path.write_text("\n".join(json.dumps(r) for r in records) + "\n")
     print(f"Wrote {len(records)} records to {out_path}")
