@@ -150,7 +150,9 @@ python 0_Preprocess/make_synthetic_data.py                 # 240, seed 20261019
 python 0_Preprocess/make_synthetic_data.py --n 960 --seed 7
 ```
 
-The seed is fixed, so the shipped `synthetic_data.csv` reproduces byte for byte.
+The seed is fixed, so the generator gives the same file on every run with the
+locked dependency versions, but that file is not byte-identical to the shipped
+`synthetic_data.csv`, and `run_demo.sh` overwrites the shipped file with it.
 After changing the generator, check it:
 
 ```bash
