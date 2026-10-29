@@ -129,7 +129,13 @@ def load_true_vals(trait_name):
                     pass
             if not valid:
                 continue
-            t = sum(valid) / len(valid)
+            if trait_name == "morality":
+                # count of donations, 0 to 5, the scale eval_trait.py scores on
+                if len(valid) < len(true_keys):
+                    continue
+                t = sum(valid)
+            else:
+                t = sum(valid) / len(valid)
             if trait_name == "tolerance_for_inequality":
                 t = 10 - t
             pairs[code] = t

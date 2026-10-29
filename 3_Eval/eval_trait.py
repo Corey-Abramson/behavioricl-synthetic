@@ -126,9 +126,11 @@ def get_pred_true(records: list[dict], config: TraitConfig) -> tuple[list[float]
     """
     Returns (preds, trues) for the primary target column.
 
-    For multi-column targets (cooperation rounds 1-4, coordination rounds 1-4,
-    morality decisions 1-5), we use the *mean* across columns as the single
-    comparison value, matching the prediction_range definition in TraitConfig.
+    For multi-column targets (cooperation rounds 1-4, coordination rounds 1-4),
+    we use the *mean* across columns as the single comparison value, matching the
+    prediction_range definition in TraitConfig. Morality (decisions 1-5) is asked
+    as a count of donations, so its true value is the *sum* of the five decisions;
+    a participant missing any of the five is skipped.
     """
     # DIVERGENCE FROM THE ORIGINAL PIPELINE (synthetic export only).
     # run_trait.py writes trust results under pred_trust_send / pred_trust_return
@@ -163,7 +165,13 @@ def get_pred_true(records: list[dict], config: TraitConfig) -> tuple[list[float]
                 pass
         if not valid:
             continue
-        t = sum(valid) / len(valid)
+        if config.name == "morality":
+            # prediction is a count, 0 to 5: score against the count
+            if len(valid) < len(true_keys):
+                continue
+            t = sum(valid)
+        else:
+            t = sum(valid) / len(valid)
         # redistribute_decision stores B's credits (slider position); predictions
         # are for A's credits, so convert: true_A = 10 - stored_B
         if config.name == "tolerance_for_inequality":
